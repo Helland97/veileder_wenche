@@ -1,4 +1,8 @@
-import { client } from "./sanity";
+import { client, previewClient } from "./sanity";
+
+function getClient(preview = false) {
+  return preview ? previewClient : client;
+}
 
 export interface Service {
   _id: string;
@@ -10,8 +14,8 @@ export interface Service {
   order: number | null;
 }
 
-export async function getServices(): Promise<Service[]> {
-  return client.fetch(
+export async function getServices(preview = false): Promise<Service[]> {
+  return getClient(preview).fetch(
     `*[_type == "service"] | order(order asc) {
       _id, title, slug, description, price, duration, order
     }`
@@ -25,8 +29,8 @@ export interface Testimonial {
   role: string | null;
 }
 
-export async function getTestimonials(): Promise<Testimonial[]> {
-  return client.fetch(
+export async function getTestimonials(preview = false): Promise<Testimonial[]> {
+  return getClient(preview).fetch(
     `*[_type == "testimonial"] {
       _id, name, quote, role
     }`
@@ -43,8 +47,8 @@ export interface HomepageContent {
   ctaText: string | null;
 }
 
-export async function getHomepage(): Promise<HomepageContent | null> {
-  return client.fetch(
+export async function getHomepage(preview = false): Promise<HomepageContent | null> {
+  return getClient(preview).fetch(
     `*[_type == "homepage"][0] {
       heroTitle, heroHighlight, heroText, aboutTitle, aboutText, ctaTitle, ctaText
     }`
@@ -63,8 +67,8 @@ export interface AboutContent {
   values: { title: string; text: string }[] | null;
 }
 
-export async function getAboutPage(): Promise<AboutContent | null> {
-  return client.fetch(
+export async function getAboutPage(preview = false): Promise<AboutContent | null> {
+  return getClient(preview).fetch(
     `*[_type == "aboutPage"][0] {
       title, subtitle, backgroundTitle, backgroundText,
       lecturerTitle, lecturerText, counselorTitle, counselorText,
@@ -81,8 +85,8 @@ export interface ContactContent {
   locationText: string | null;
 }
 
-export async function getContactPage(): Promise<ContactContent | null> {
-  return client.fetch(
+export async function getContactPage(preview = false): Promise<ContactContent | null> {
+  return getClient(preview).fetch(
     `*[_type == "contactPage"][0] {
       title, subtitle, email, phone, locationText
     }`
@@ -96,8 +100,8 @@ export interface BookingContent {
   confirmationText: string | null;
 }
 
-export async function getBookingPage(): Promise<BookingContent | null> {
-  return client.fetch(
+export async function getBookingPage(preview = false): Promise<BookingContent | null> {
+  return getClient(preview).fetch(
     `*[_type == "bookingPage"][0] {
       title, subtitle, confirmationTitle, confirmationText
     }`

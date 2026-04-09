@@ -1,5 +1,6 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
+import { presentationTool } from "sanity/presentation";
 import type { StructureBuilder } from "sanity/structure";
 import { schemaTypes } from "@/sanity/schemas";
 
@@ -9,7 +10,6 @@ const structure = (S: StructureBuilder) =>
   S.list()
     .title("Innhold")
     .items([
-      // Singleton pages — open the editor directly
       S.listItem()
         .title("Hjem")
         .id("homepage")
@@ -29,7 +29,6 @@ const structure = (S: StructureBuilder) =>
 
       S.divider(),
 
-      // List types — can have multiple documents
       ...S.documentTypeListItems().filter(
         (item) => !singletonTypes.has(item.getId()!)
       ),
@@ -41,7 +40,16 @@ export default defineConfig({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
   basePath: "/studio",
-  plugins: [structureTool({ structure })],
+  plugins: [
+    structureTool({ structure }),
+    presentationTool({
+      previewUrl: {
+        draftMode: {
+          enable: "/api/draft",
+        },
+      },
+    }),
+  ],
   schema: {
     types: schemaTypes,
   },

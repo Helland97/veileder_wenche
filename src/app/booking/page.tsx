@@ -1,3 +1,4 @@
+import { draftMode } from "next/headers";
 import { getServices, getBookingPage, type Service, type BookingContent } from "@/lib/queries";
 import BookingForm from "@/components/BookingForm";
 
@@ -18,13 +19,14 @@ const fallbackContent: BookingContent = {
 };
 
 export default async function BookingPage() {
+  const { isEnabled: preview } = await draftMode();
   let services: Pick<Service, "_id" | "title" | "duration" | "price">[];
   let content: BookingContent;
 
   try {
     const [sanityServices, bookingContent] = await Promise.all([
-      getServices(),
-      getBookingPage(),
+      getServices(preview),
+      getBookingPage(preview),
     ]);
     services = sanityServices.length > 0 ? sanityServices : fallbackServices;
     content = bookingContent ?? fallbackContent;

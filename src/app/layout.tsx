@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { draftMode } from "next/headers";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import VisualEditingWrapper from "@/components/VisualEditingWrapper";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,11 +25,13 @@ export const metadata: Metadata = {
     "Profesjonell veiledning og rådgivning for et bedre liv. Wenche tilbyr helhetlig veiledning med bakgrunn som sykepleier, foreleser og veileder.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { isEnabled: isDraftMode } = await draftMode();
+
   return (
     <html
       lang="no"
@@ -37,6 +41,7 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        {isDraftMode && <VisualEditingWrapper />}
       </body>
     </html>
   );

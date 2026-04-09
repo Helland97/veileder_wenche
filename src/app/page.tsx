@@ -1,3 +1,4 @@
+import { draftMode } from "next/headers";
 import { getServices, getHomepage, getTestimonials, type Service, type HomepageContent, type Testimonial } from "@/lib/queries";
 import HomeContent from "@/components/HomeContent";
 
@@ -31,15 +32,16 @@ const fallbackServices = [
 ];
 
 export default async function Home() {
+  const { isEnabled: preview } = await draftMode();
   let services: Pick<Service, "_id" | "title" | "description" | "price" | "duration">[];
   let content: HomepageContent | null = null;
   let testimonials: Testimonial[] = [];
 
   try {
     const [sanityServices, homepageContent, sanityTestimonials] = await Promise.all([
-      getServices(),
-      getHomepage(),
-      getTestimonials(),
+      getServices(preview),
+      getHomepage(preview),
+      getTestimonials(preview),
     ]);
     services = sanityServices.length > 0 ? sanityServices.slice(0, 3) : fallbackServices;
     content = homepageContent;

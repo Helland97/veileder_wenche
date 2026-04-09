@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import Section from "@/components/Section";
 import { getServices, type Service } from "@/lib/queries";
 
@@ -56,10 +57,11 @@ function formatPrice(price: number | null) {
 }
 
 export default async function TjenesterPage() {
+  const { isEnabled: preview } = await draftMode();
   let services: Pick<Service, "_id" | "title" | "description" | "duration" | "price">[];
 
   try {
-    const sanityServices = await getServices();
+    const sanityServices = await getServices(preview);
     services = sanityServices.length > 0 ? sanityServices : fallbackServices;
   } catch {
     services = fallbackServices;

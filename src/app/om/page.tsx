@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import Section from "@/components/Section";
 import { getAboutPage, type AboutContent } from "@/lib/queries";
 
@@ -39,16 +40,16 @@ const fallback: AboutContent = {
 };
 
 export default async function OmPage() {
+  const { isEnabled: preview } = await draftMode();
   let content: AboutContent;
 
   try {
-    const sanityContent = await getAboutPage();
+    const sanityContent = await getAboutPage(preview);
     content = sanityContent ?? fallback;
   } catch {
     content = fallback;
   }
 
-  // Merge with fallback for any missing fields
   const c = { ...fallback, ...Object.fromEntries(Object.entries(content).filter(([, v]) => v != null)) } as AboutContent;
 
   return (

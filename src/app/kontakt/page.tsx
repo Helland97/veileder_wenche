@@ -1,3 +1,4 @@
+import { draftMode } from "next/headers";
 import { getContactPage, type ContactContent } from "@/lib/queries";
 import ContactForm from "@/components/ContactForm";
 
@@ -17,10 +18,11 @@ const fallback: ContactContent = {
 };
 
 export default async function KontaktPage() {
+  const { isEnabled: preview } = await draftMode();
   let content: ContactContent;
 
   try {
-    const sanityContent = await getContactPage();
+    const sanityContent = await getContactPage(preview);
     content = sanityContent ?? fallback;
   } catch {
     content = fallback;
